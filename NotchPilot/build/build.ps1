@@ -1,6 +1,6 @@
 # NotchPilot build script.
 # 1) src\NotchPilot.cs -> build\out\NotchPilot.exe (the app). Libraries in the repo root lib\ folder are embedded into the exe.
-# 2) src\Setup.cs + embedded NotchPilot.exe + embedded PawnIO installer (lib\PawnIO_setup.exe) -> dist\NotchPilot-Setup.exe
+# 2) src\Setup.cs + src\Loc.cs + embedded NotchPilot.exe + embedded PawnIO installer (lib\PawnIO_setup.exe) -> dist\NotchPilot-Setup.exe
 # Requires: the Windows .NET Framework compiler (csc.exe).
 
 $ErrorActionPreference = "Stop"
@@ -33,7 +33,7 @@ if ($LASTEXITCODE -ne 0) { throw "NotchPilot failed to compile (code $LASTEXITCO
 $setup = Join-Path $dist "NotchPilot-Setup.exe"
 & $csc /nologo /target:winexe /codepage:65001 "/win32icon:$icon" "/win32manifest:$manifest" `
     /reference:System.Windows.Forms.dll /reference:System.Drawing.dll `
-    "/resource:$app,NotchPilotPayload" "/resource:$pawn,PawnIOSetup" "/out:$setup" (Join-Path $src "Setup.cs")
+    "/resource:$app,NotchPilotPayload" "/resource:$pawn,PawnIOSetup" "/out:$setup" (Join-Path $src "Setup.cs") (Join-Path $src "Loc.cs")
 if ($LASTEXITCODE -ne 0) { throw "Installer failed to compile (code $LASTEXITCODE)" }
 
 "NotchPilot.exe       : " + (Get-Item $app).Length + " bytes"

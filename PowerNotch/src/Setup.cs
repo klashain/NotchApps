@@ -21,6 +21,8 @@ namespace PowerNotchSetup
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
+            // Installer and uninstaller follow the Windows display language
+            Loc.Set(Loc.Detect());
             // Uninstall in the "Apps" list (or PowerNotch-Kaldir.exe /kaldir) enters this mode
             if (Array.IndexOf(args, "/kaldir") >= 0)
             {
@@ -53,7 +55,7 @@ namespace PowerNotchSetup
             string target = Path.Combine(folder, "PowerNotch.exe");
             using (Stream src = Assembly.GetExecutingAssembly().GetManifestResourceStream(ResourceName))
             {
-                if (src == null) throw new InvalidOperationException("Kurulum dosyasinin icinde PowerNotch bulunamadi.");
+                if (src == null) throw new InvalidOperationException(Loc.F("setup_no_payload", "PowerNotch"));
                 using (FileStream dst = File.Create(target))
                 {
                     src.CopyTo(dst);
@@ -94,12 +96,12 @@ namespace PowerNotchSetup
                 using (Process p = Process.Start(psi))
                 {
                     p.WaitForExit();
-                    if (p.ExitCode != 0) throw new InvalidOperationException("Dosyalar yazılamadı (kod " + p.ExitCode + ").");
+                    if (p.ExitCode != 0) throw new InvalidOperationException(Loc.F("setup_copy_fail", p.ExitCode));
                 }
             }
             catch (System.ComponentModel.Win32Exception)
             {
-                throw new InvalidOperationException("Yönetici onayı verilmedi; dosyalar güncellenmedi.");
+                throw new InvalidOperationException(Loc.T("setup_copy_denied"));
             }
             return Path.Combine(folder, "PowerNotch.exe");
         }
@@ -148,7 +150,7 @@ namespace PowerNotchSetup
             {
                 using (Stream src = Assembly.GetExecutingAssembly().GetManifestResourceStream("PawnIOSetup"))
                 {
-                    if (src == null) return "Islemci sicakligi surucusu kurulum paketi bulunamadi.";
+                    if (src == null) return Loc.T("setup_pawn_missing");
                     using (FileStream dst = File.Create(tmp))
                     {
                         src.CopyTo(dst);
@@ -163,13 +165,13 @@ namespace PowerNotchSetup
                 using (Process p = Process.Start(psi))
                 {
                     p.WaitForExit();
-                    if (p.ExitCode != 0) return "Islemci sicakligi surucusu kurulamadi (kod " + p.ExitCode + ").";
+                    if (p.ExitCode != 0) return Loc.F("setup_pawn_fail", p.ExitCode);
                 }
                 return null;
             }
             catch (System.ComponentModel.Win32Exception)
             {
-                return "Yonetici onayi verilmedi; islemci sicakligi surucusu kurulmadi.";
+                return Loc.T("setup_pawn_denied");
             }
             finally
             {
@@ -187,16 +189,16 @@ namespace PowerNotchSetup
                 psi.UseShellExecute = true;
                 psi.Verb = "runas";
                 Process p = Process.Start(psi);
-                if (p == null) return "Yönetici görevi başlatılamadı. PowerNotch normal modda çalışır.";
+                if (p == null) return Loc.F("setup_task_start_fail", "PowerNotch");
                 using (p)
                 {
                     p.WaitForExit();
-                    return p.ExitCode == 0 ? null : "Yönetici görevi kurulamadı (kod " + p.ExitCode + "). PowerNotch normal modda çalışır.";
+                    return p.ExitCode == 0 ? null : Loc.F("setup_task_fail", "PowerNotch", p.ExitCode);
                 }
             }
             catch (Exception)
             {
-                return "Yönetici onayı verilmedi. PowerNotch normal modda çalışır; Ayarlar'dan sonra tekrar kurabilirsin.";
+                return Loc.F("setup_task_denied", "PowerNotch");
             }
         }
     }
@@ -210,12 +212,12 @@ namespace PowerNotchSetup
         public static void Run()
         {
             string folder = Path.GetDirectoryName(Application.ExecutablePath);
-            bool answer = DarkBox.Ask(null, "PowerNotch kaldırılsın mı?\n\nProgram klasörü, kısayollar, yönetici görevi ve ayarlar silinecek.", "PowerNotch Kaldır");
+            bool answer = DarkBox.Ask(null, Loc.F("uninst_ask", "PowerNotch"), Loc.F("uninst_title", "PowerNotch"));
             if (!answer) return;
 
             if (Installer.IsRunning())
             {
-                DarkBox.Show(null, "PowerNotch açık. Tepsiden kapatıp kaldırmayı tekrar deneyin.", "PowerNotch Kaldır");
+                DarkBox.Show(null, Loc.F("uninst_running", "PowerNotch"), Loc.F("uninst_title", "PowerNotch"));
                 return;
             }
 
@@ -247,7 +249,7 @@ namespace PowerNotchSetup
                 try { Process.Start(psi); }
                 catch (Exception) { }
             }
-            DarkBox.Show(null, "PowerNotch kaldırıldı.", "PowerNotch Kaldır");
+            DarkBox.Show(null, Loc.F("uninst_done", "PowerNotch"), Loc.F("uninst_title", "PowerNotch"));
         }
 
         // Deletes the task if present. If normal rights are not enough, does one elevated delete (Windows approval).
@@ -327,7 +329,7 @@ namespace PowerNotchSetup
             Cursor = Cursors.Hand;
             BackColor = Dark;
             ForeColor = Color.FromArgb(235, 238, 242);
-            Font = new Font("Segoe UI", 9.5f);
+            Font = new Font(Loc.Face("Segoe UI"), 9.5f);
         }
 
         public bool Checked
@@ -438,7 +440,7 @@ namespace PowerNotchSetup
                 f.ShowInTaskbar = false;
                 f.BackColor = Card;
                 f.ForeColor = TextMain;
-                f.Font = new Font("Segoe UI", 9.5f);
+                f.Font = new Font(Loc.Face("Segoe UI"), 9.5f);
 
                 Label body = new Label();
                 body.Text = text;
@@ -453,8 +455,8 @@ namespace PowerNotchSetup
 
                 if (ask)
                 {
-                    Button yes = Btn("Evet", Accent, Bg, new Point(f.ClientSize.Width - 200, top), DialogResult.Yes);
-                    Button no = Btn("Hayır", CardHover, TextMain, new Point(f.ClientSize.Width - 102, top), DialogResult.No);
+                    Button yes = Btn(Loc.T("dlg_yes"), Accent, Bg, new Point(f.ClientSize.Width - 200, top), DialogResult.Yes);
+                    Button no = Btn(Loc.T("dlg_no"), CardHover, TextMain, new Point(f.ClientSize.Width - 102, top), DialogResult.No);
                     f.Controls.Add(yes);
                     f.Controls.Add(no);
                     f.AcceptButton = yes;
@@ -462,7 +464,7 @@ namespace PowerNotchSetup
                 }
                 else
                 {
-                    Button ok = Btn("Tamam", Accent, Bg, new Point(f.ClientSize.Width - 110, top), DialogResult.OK);
+                    Button ok = Btn(Loc.T("dlg_ok"), Accent, Bg, new Point(f.ClientSize.Width - 110, top), DialogResult.OK);
                     f.Controls.Add(ok);
                     f.AcceptButton = ok;
                 }
@@ -527,21 +529,21 @@ namespace PowerNotchSetup
 
         public SetupForm()
         {
-            Text = "PowerNotch Kurulum";
+            Text = Loc.F("setup_title", "PowerNotch");
             FormBorderStyle = FormBorderStyle.FixedDialog;
             MaximizeBox = false;
             StartPosition = FormStartPosition.CenterScreen;
             BackColor = Bg;
             ForeColor = TextMain;
-            Font = new Font("Segoe UI", 9.5f);
+            Font = new Font(Loc.Face("Segoe UI"), 9.5f);
             ClientSize = new Size(460, 390);
 
             Label title = MakeLabel("PowerNotch", new Point(24, 16), Accent);
-            title.Font = new Font("Segoe UI Semibold", 20f);
+            title.Font = new Font(Loc.Face("Segoe UI Semibold"), 20f);
             Controls.Add(title);
-            Controls.Add(MakeLabel("Güç modu, çentik ve FPS göstergesi tek uygulamada.", new Point(26, 66), Muted));
+            Controls.Add(MakeLabel(Loc.T("setup_tag_pn"), new Point(26, 66), Muted));
 
-            Controls.Add(MakeLabel("Kurulacak klasör", new Point(24, 104), TextMain));
+            Controls.Add(MakeLabel(Loc.T("setup_folder"), new Point(24, 104), TextMain));
             folderBox.Location = new Point(24, 128);
             folderBox.Size = new Size(328, 24);
             folderBox.BackColor = Card;
@@ -551,18 +553,18 @@ namespace PowerNotchSetup
             Controls.Add(folderBox);
 
             Button browse = new Button();
-            browse.Text = "Gözat";
+            browse.Text = Loc.T("setup_browse");
             browse.Location = new Point(362, 127);
             browse.Size = new Size(74, 26);
             StyleButton(browse, Card, TextMain);
             browse.Click += delegate { Browse(); };
             Controls.Add(browse);
 
-            StyleCheck(desktopBox, "Masaüstü kısayolu oluştur", 24, 170, true);
-            StyleCheck(adminBox, "Yönetici modunu kur (bir kez Windows onayı ister)", 24, 200, true);
-            StyleCheck(runBox, "Kurulumdan sonra PowerNotch'i aç", 24, 230, true);
+            StyleCheck(desktopBox, Loc.T("setup_desktop"), 24, 170, true);
+            StyleCheck(adminBox, Loc.T("setup_admin"), 24, 200, true);
+            StyleCheck(runBox, Loc.F("setup_run", "PowerNotch"), 24, 230, true);
 
-            Label info = MakeLabel("Windows açılışında başlatma varsayılan olarak açık kurulur; Ayarlar'dan kapatılabilir.", new Point(24, 264), Muted);
+            Label info = MakeLabel(Loc.T("setup_info"), new Point(24, 264), Muted);
             info.Size = new Size(412, 36);
             info.AutoSize = false;
             Controls.Add(info);
@@ -572,7 +574,7 @@ namespace PowerNotchSetup
             status.ForeColor = Muted;
             Controls.Add(status);
 
-            installBtn.Text = "Kur";
+            installBtn.Text = Loc.T("setup_install");
             installBtn.Location = new Point(264, 344);
             installBtn.Size = new Size(84, 32);
             StyleButton(installBtn, Accent, Bg);
@@ -580,7 +582,7 @@ namespace PowerNotchSetup
             Controls.Add(installBtn);
 
             Button close = new Button();
-            close.Text = "Kapat";
+            close.Text = Loc.T("close");
             close.Location = new Point(354, 344);
             close.Size = new Size(84, 32);
             StyleButton(close, Card, TextMain);
@@ -658,7 +660,7 @@ namespace PowerNotchSetup
         {
             using (FolderBrowserDialog dlg = new FolderBrowserDialog())
             {
-                dlg.Description = "PowerNotch'in kurulacağı klasörü seç (içine PowerNotch klasörü açılır)";
+                dlg.Description = Loc.F("setup_pick_folder", "PowerNotch");
                 dlg.SelectedPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
                 if (dlg.ShowDialog(this) == DialogResult.OK)
                     folderBox.Text = Path.Combine(dlg.SelectedPath, "PowerNotch");
@@ -668,15 +670,15 @@ namespace PowerNotchSetup
         void Install()
         {
             string folder = folderBox.Text.Trim();
-            if (folder.Length == 0) { Show("Bir klasör seç.", true); return; }
-            if (Installer.IsRunning()) { Show("PowerNotch açık. Tepsiden kapatıp tekrar kur.", true); return; }
+            if (folder.Length == 0) { Show(Loc.T("setup_need_folder"), true); return; }
+            if (Installer.IsRunning()) { Show(Loc.F("setup_running", "PowerNotch"), true); return; }
 
             bool ok = false;
             installBtn.Enabled = false;
             Cursor = Cursors.WaitCursor;
             try
             {
-                Show("Dosyalar kopyalanıyor…", false);
+                Show(Loc.T("setup_copying"), false);
                 string exe;
                 try
                 {
@@ -686,7 +688,7 @@ namespace PowerNotchSetup
                 catch (UnauthorizedAccessException)
                 {
                     // Admin mode locked the folder: the files are written once with Windows approval
-                    Show("Klasör korumalı; Windows onayı bekleniyor…", false);
+                    Show(Loc.T("setup_locked"), false);
                     exe = Installer.CopyElevated(folder);
                 }
                 Installer.Register(folder, exe);
@@ -699,24 +701,24 @@ namespace PowerNotchSetup
                 string adminMsg = null;
                 if (adminBox.Checked)
                 {
-                    Show("Yönetici modu kuruluyor; Windows onayı bekleniyor…", false);
+                    Show(Loc.T("setup_admin_busy"), false);
                     adminMsg = Installer.InstallAdminTask(exe);
                 }
 
-                Show("Islemci sicakligi surucusu kuruluyor…", false);
+                Show(Loc.T("setup_driver_busy"), false);
                 string pawnMsg = Installer.InstallPawnIO();
 
                 if (runBox.Checked) Process.Start(exe);
 
-                string done = "Kurulum tamamlandı:\n" + folder;
+                string done = Loc.F("setup_done", folder);
                 if (adminMsg != null) done += "\n\n" + adminMsg;
                 if (pawnMsg != null) done += "\n\n" + pawnMsg;
-                DarkBox.Show(this, done, "PowerNotch Kurulum");
+                DarkBox.Show(this, done, Loc.F("setup_title", "PowerNotch"));
                 ok = true;
             }
             catch (Exception ex)
             {
-                Show("Kurulum başarısız: " + ex.Message, true);
+                Show(Loc.F("setup_failed", ex.Message), true);
             }
             finally
             {

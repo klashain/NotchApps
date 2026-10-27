@@ -83,7 +83,7 @@ Both are written in plain C# on .NET Framework 4 (ships with Windows), have **no
 > [!NOTE]
 > The installers are not code-signed, so Windows SmartScreen may warn you. Click **More info → Run anyway**. You can verify the download with the SHA-256 hashes in the release notes, or build it yourself.
 
-The installer window is currently in Turkish only; the apps themselves follow your Windows language (or the one you pick in Settings).
+The installer opens in your Windows display language; the apps follow it too, or the language you pick in Settings.
 
 **Requirements:** Windows 10 or 11 (x64), .NET Framework 4 (preinstalled on Windows). Do not run from a USB stick — the admin task and startup shortcut store the install path.
 

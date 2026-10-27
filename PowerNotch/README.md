@@ -77,4 +77,4 @@ If the uninstaller does not work, remove it manually:
 ## Notes
 
 - Settings file: `%APPDATA%\PowerNotch\settings.txt`
-- The installer UI is currently Turkish only; the app itself supports all six languages.
+- The installer and uninstaller follow the Windows display language (six languages, English fallback).

@@ -2,6 +2,11 @@
 
 All notable changes to this project are documented here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project uses [Semantic Versioning](https://semver.org/).
 
+## [Unreleased]
+
+### Added
+- The installers and uninstallers now open in the Windows display language (Türkçe, English, Español, Deutsch, Français, 中文), falling back to English.
+
 ## [1.0.0] - 2026-10-27
 
 First public release.
@@ -20,4 +25,5 @@ First public release.
 - Per-mode CPU cap, brightness and screen-off settings.
 - Optional FPS indicator, animations, six UI languages.
 
+[Unreleased]: https://github.com/klashain/NotchApps/compare/v1.0.0...HEAD
 [1.0.0]: https://github.com/klashain/NotchApps/releases/tag/v1.0.0

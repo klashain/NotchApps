@@ -1,6 +1,6 @@
 # PowerNotch build script.
 # 1) src\PowerNotch.cs -> build\out\PowerNotch.exe (the app). Libraries in the repo root lib\ folder are embedded into the exe.
-# 2) src\Setup.cs + embedded PowerNotch.exe + embedded PawnIO installer (lib\PawnIO_setup.exe) -> dist\PowerNotch-Setup.exe
+# 2) src\Setup.cs + src\Loc.cs + embedded PowerNotch.exe + embedded PawnIO installer (lib\PawnIO_setup.exe) -> dist\PowerNotch-Setup.exe
 # Requires: the Windows .NET Framework compiler (csc.exe).
 
 $ErrorActionPreference = "Stop"
@@ -33,7 +33,7 @@ if ($LASTEXITCODE -ne 0) { throw "PowerNotch failed to compile (code $LASTEXITCO
 $setup = Join-Path $dist "PowerNotch-Setup.exe"
 & $csc /nologo /target:winexe /codepage:65001 "/win32icon:$icon" "/win32manifest:$manifest" `
     /reference:System.Windows.Forms.dll /reference:System.Drawing.dll `
-    "/resource:$app,PowerNotchPayload" "/resource:$pawn,PawnIOSetup" "/out:$setup" (Join-Path $src "Setup.cs")
+    "/resource:$app,PowerNotchPayload" "/resource:$pawn,PawnIOSetup" "/out:$setup" (Join-Path $src "Setup.cs") (Join-Path $src "Loc.cs")
 if ($LASTEXITCODE -ne 0) { throw "Installer failed to compile (code $LASTEXITCODE)" }
 
 "PowerNotch.exe       : " + (Get-Item $app).Length + " bytes"

@@ -82,4 +82,4 @@ If the uninstaller does not work, remove it manually:
 
 - Settings file: `%APPDATA%\NotchPilot\settings.txt`
 - GPU temperature is read from the NVIDIA driver (`nvml.dll`).
-- The installer UI is currently Turkish only; the app itself supports all six languages.
+- The installer and uninstaller follow the Windows display language (six languages, English fallback).
