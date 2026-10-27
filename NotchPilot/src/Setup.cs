@@ -117,7 +117,7 @@ namespace NotchPilotSetup
             using (RegistryKey key = Registry.CurrentUser.CreateSubKey(Uninstaller.KeyPath))
             {
                 key.SetValue("DisplayName", "NotchPilot");
-                key.SetValue("DisplayVersion", "1.0");
+                key.SetValue("DisplayVersion", "1.1.0");
                 key.SetValue("Publisher", "NotchPilot");
                 key.SetValue("InstallLocation", folder);
                 key.SetValue("DisplayIcon", exe);

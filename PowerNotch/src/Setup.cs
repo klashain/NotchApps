@@ -117,7 +117,7 @@ namespace PowerNotchSetup
             using (RegistryKey key = Registry.CurrentUser.CreateSubKey(Uninstaller.KeyPath))
             {
                 key.SetValue("DisplayName", "PowerNotch");
-                key.SetValue("DisplayVersion", "1.0");
+                key.SetValue("DisplayVersion", "1.1.0");
                 key.SetValue("Publisher", "PowerNotch");
                 key.SetValue("InstallLocation", folder);
                 key.SetValue("DisplayIcon", exe);
