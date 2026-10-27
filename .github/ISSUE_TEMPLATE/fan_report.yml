@@ -1,0 +1,30 @@
+name: Fan control test report
+description: Report how NotchPilot's fan control works on your HP Omen
+labels: [hardware-report]
+body:
+  - type: input
+    id: laptop
+    attributes:
+      label: Laptop model
+      placeholder: HP Omen 16-xf0xxx
+    validations:
+      required: true
+  - type: input
+    id: bios
+    attributes:
+      label: BIOS version
+  - type: checkboxes
+    id: presets
+    attributes:
+      label: Which presets work?
+      options:
+        - label: Quiet (0 RPM)
+        - label: Medium (1400)
+        - label: Game (2800)
+        - label: Max (5200)
+        - label: Auto (BIOS)
+  - type: textarea
+    id: notes
+    attributes:
+      label: Notes
+      description: RPM readings, temperatures, anything unusual.

@@ -1,0 +1,46 @@
+name: Bug report
+description: Something doesn't work as expected
+labels: [bug]
+body:
+  - type: dropdown
+    id: app
+    attributes:
+      label: App
+      options: [NotchPilot, PowerNotch]
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: App version
+      placeholder: v1.0.0
+    validations:
+      required: true
+  - type: input
+    id: laptop
+    attributes:
+      label: Laptop model
+      placeholder: HP Omen 16-xf0xxx
+    validations:
+      required: true
+  - type: input
+    id: windows
+    attributes:
+      label: Windows version
+      placeholder: Windows 11 24H2
+  - type: dropdown
+    id: admin
+    attributes:
+      label: Is admin mode installed?
+      options: ["Yes", "No", "Not sure"]
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened?
+      description: What did you do, what did you expect, and what happened instead?
+    validations:
+      required: true
+  - type: textarea
+    id: extra
+    attributes:
+      label: Screenshots or extra details

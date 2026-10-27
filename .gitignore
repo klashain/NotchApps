@@ -1,0 +1,14 @@
+# Build output (not tracked)
+build/out/
+dist/
+bin/
+obj/
+
+# Executables and backups (including lib/PawnIO_setup.exe, see README)
+*.exe
+*_prev_*.exe
+
+# Temporary files
+*.tmp
+*.log
+Thumbs.db

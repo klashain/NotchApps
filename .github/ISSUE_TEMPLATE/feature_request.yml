@@ -1,0 +1,19 @@
+name: Feature request
+description: Suggest an idea
+labels: [enhancement]
+body:
+  - type: dropdown
+    id: app
+    attributes:
+      label: App
+      options: [NotchPilot, PowerNotch, Both]
+  - type: textarea
+    id: idea
+    attributes:
+      label: What would you like?
+    validations:
+      required: true
+  - type: textarea
+    id: why
+    attributes:
+      label: Why would it be useful?
